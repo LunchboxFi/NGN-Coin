@@ -1,0 +1,23 @@
+{
+  "name": "ngn-coin",
+  "version": "1.0.0",
+  "description": "A stablecoin to bring Nigerian Naira on Solana",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@metaplex-foundation/mpl-token-metadata": "^2.5.2",
+    "@solana/spl-token": "^0.3.7",
+    "@solana/web3.js": "^1.73.0",
+    "bs58": "^5.0.0",
+    "typescript": "^4.9.4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "ts-node": "^10.9.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
