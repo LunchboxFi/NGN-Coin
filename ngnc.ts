@@ -18,6 +18,7 @@ import {
 	LAMPORTS_PER_SOL,
   PublicKey,
 } from "@solana/web3.js";
+import { BN } from "@coral-xyz/anchor";
 import {
 	createInitializeNonTransferableMintInstruction,
 	createInitializeMintInstruction,
@@ -81,6 +82,14 @@ export function loadWalletKey(keypairFile:string): Keypair {
     );
    const sig = await sendAndConfirmTransaction(connection, mintTransaction, [payer, mintKeypair], undefined);
    console.log(sig)
+   
+   /**
+    * @mintTo a particular publicKey
+    */
+   const wallet = new PublicKey("8Hs2MzJAuWXt57LKcTsYQaRCZyNUeuyuGHrfAzYQSLDv")
+   let account = await createAccount(connection, payer, mint, wallet, undefined, undefined, TOKEN_2022_PROGRAM_ID);
+   const receipt = await mintTo(connection, payer, mint, account, mintAuthority, 5 * LAMPORTS_PER_SOL, [], undefined, TOKEN_2022_PROGRAM_ID);
+   console.log(receipt)
    return sig
 
    }
@@ -88,7 +97,6 @@ export function loadWalletKey(keypairFile:string): Keypair {
     const payer = loadWalletKey('mint.json');
 
     const mintAuthority = Keypair.generate();
-    console.log(mintAuthority)
     const mintKeypair = Keypair.generate();
     const permanentDelegate = Keypair.generate();
     
@@ -101,60 +109,4 @@ export function loadWalletKey(keypairFile:string): Keypair {
     )
 
 
-    //Transfer function
-    async function transfer(
-                     payer: Keypair,
-                     mintAccount: PublicKey,
-                     owner1: Keypair, 
-                     owner2: Keypair, 
-                     cluster: Cluster,
-                     ) {
-      
-      const connection = new Connection(clusterApiUrl(cluster), 'confirmed');
-
-      let destination = await createAccount(
-          connection,
-          payer,
-          mintAccount,
-          owner2.publicKey,
-          undefined,
-          undefined,
-          TOKEN_2022_PROGRAM_ID
-      );
-      let account = await createAccount(connection, payer, mintAccount, owner1.publicKey, undefined, undefined, TOKEN_2022_PROGRAM_ID);
-      
-      if(account){
-        
-      const receipt = await mintTo(connection, payer, mintAccount, account, mintAuthority, 5, [], undefined, TOKEN_2022_PROGRAM_ID);
-      console.log(receipt)
-      const transfer = await transferChecked(
-          connection,
-          payer,
-          account,
-          mintAccount,
-          destination,
-          permanentDelegate,
-          2,
-          9,
-          undefined,
-          undefined,
-          TOKEN_2022_PROGRAM_ID
-      );
-      console.log(transfer)
-      const source_info = await connection.getTokenAccountBalance(account);
-      console.log(source_info)
-      const destination_info = await connection.getTokenAccountBalance(destination);
-      console.log(destination_info)
-      } 
-    }
-
-    const owner1 = Keypair.generate()
-    const owner2 = Keypair.generate()
-
-    transfer(
-        payer,
-        mintKeypair.publicKey,
-        owner1,
-        owner2,
-        "devnet"
-    )
+   
